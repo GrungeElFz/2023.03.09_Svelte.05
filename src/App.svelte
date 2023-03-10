@@ -7,7 +7,7 @@
 	let toDoLists = null;
 
 	function LOAD_toDoLists() {
-		return fetch('https://jsonplaceholder.typicode.com/todos').then((response) => {
+		return fetch('https://jsonplaceholder.typicode.com/todos?_limit=10').then((response) => {
 			if (response.ok) {
 				return response.json();
 			} else {
