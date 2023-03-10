@@ -4,23 +4,17 @@
 
 	let showList = true;
 	let toDoListBox;
-	let toDoLists = [
-		{
-			id: uuid(),
-			title: 'First task',
-			completed: true
-		},
-		{
-			id: uuid(),
-			title: 'Second task',
-			completed: false
-		},
-		{
-			id: uuid(),
-			title: 'Third task',
-			completed: false
-		}
-	];
+	let toDoLists = null;
+
+	function LOAD_toDoLists() {
+		return fetch('https://jsonplaceholder.typicode.com/todos').then((response) => {
+			if (response.ok) {
+				return response.json();
+			} else {
+				throw new Error('An error has occurred.');
+			}
+		});
+	}
 
 	function handleAddToDoLists(event) {
 		event.preventDefault();
@@ -51,7 +45,6 @@
 	}
 </script>
 
-<h2>{toDoLists.length} Tasks</h2>
 
 <label>
 	<input type="checkbox" bind:checked={showList} />
@@ -59,15 +52,17 @@
 </label>
 
 {#if showList}
-	<div style:max-width="20rem">
-		<ToDoList
-			{toDoLists}
-			bind:this={toDoListBox}
-			on:addtodo={handleAddToDoLists}
-			on:removetodo={handleRemoveToDoLists}
-			on:toggletodo={handleToggleToDoLists}
-		/>
-	</div>
+	{#await LOAD_toDoLists() then toDoLists }
+		<div style:max-width="20rem">
+			<ToDoList
+				{toDoLists}
+				bind:this={toDoListBox}
+				on:addtodo={handleAddToDoLists}
+				on:removetodo={handleRemoveToDoLists}
+				on:toggletodo={handleToggleToDoLists}
+			/>
+		</div>
+	{/await}
 {/if}
 
 <style>
