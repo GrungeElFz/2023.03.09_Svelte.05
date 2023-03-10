@@ -62,6 +62,8 @@
 				on:toggletodo={handleToggleToDoLists}
 			/>
 		</div>
+	{:catch error}
+		<p>{error.message || 'An error has occured.'}</p>
 	{/await}
 {/if}
 
