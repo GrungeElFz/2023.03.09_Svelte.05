@@ -6,8 +6,6 @@
 	import FaRegTrashAlt from 'svelte-icons/fa/FaRegTrashAlt.svelte';
 
 	afterUpdate(() => {
-		console.log(`Element: Height.afterUpdate -> ${listDiv.offsetHeight}px`);
-
 		if (autoScroll) {
 			listDiv.scrollTo(0, listDivScrollHeight);
 		}
@@ -16,6 +14,9 @@
 	});
 
 	export let toDoLists = null;
+	export let error = null;
+	export let isLoading = false;
+
 	let prevToDoLists = toDoLists;
 	let inputText = '';
 	let listDiv, listDivScrollHeight, autoScroll;
@@ -62,7 +63,11 @@
 </script>
 
 <div class="toDoLists-wrapper">
-	{#if toDoLists}
+	{#if isLoading}
+		<p>Loading...</p>
+	{:else if error}
+		<p>{error}</p>
+	{:else if toDoLists}
 		<div class="toDoList" bind:this={listDiv}>
 			<div bind:offsetHeight={listDivScrollHeight}>
 				{#if toDoLists.length === 0}

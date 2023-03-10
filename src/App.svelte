@@ -3,22 +3,29 @@
 	import { v4 as uuid } from 'uuid';
 	import { onMount } from 'svelte';
 
-	let showList = true;
 	let toDoListBox;
+	let showList = true;
+
 	let toDoLists = null;
+	let error = null;
+	let isLoading = false;
 
 	onMount(() => {
 		LOAD_toDoLists();
 	});
 
-	function LOAD_toDoLists() {
-		fetch('https://jsonplaceholder.typicode.com/todos?_limit=10').then(async (response) => {
+	async function LOAD_toDoLists() {
+		isLoading = true;
+
+		await fetch('https://jsonplaceholder.typicode.com/todos?_limit=10').then(async (response) => {
 			if (response.ok) {
 				toDoLists = await response.json();
 			} else {
-				throw new Error('An error has occurred.');
+				error = 'An error has occured.';
 			}
 		});
+
+		isLoading = false;
 	}
 
 	function handleAddToDoLists(event) {
@@ -59,6 +66,8 @@
 	<div style:max-width="20rem">
 		<ToDoList
 			{toDoLists}
+			{error}
+			{isLoading}
 			bind:this={toDoListBox}
 			on:addtodo={handleAddToDoLists}
 			on:removetodo={handleRemoveToDoLists}
