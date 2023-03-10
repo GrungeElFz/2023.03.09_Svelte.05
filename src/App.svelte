@@ -1,16 +1,20 @@
 <script>
 	import ToDoList from './lib/ToDoList.svelte';
 	import { v4 as uuid } from 'uuid';
+	import { onMount } from 'svelte';
 
 	let showList = true;
 	let toDoListBox;
 	let toDoLists = null;
-	let promise = LOAD_toDoLists();
+
+	onMount(() => {
+		LOAD_toDoLists();
+	});
 
 	function LOAD_toDoLists() {
-		return fetch('https://jsonplaceholder.typicode.com/todos?_limit=10').then((response) => {
+		fetch('https://jsonplaceholder.typicode.com/todos?_limit=10').then(async (response) => {
 			if (response.ok) {
-				return response.json();
+				toDoLists = await response.json();
 			} else {
 				throw new Error('An error has occurred.');
 			}
@@ -52,29 +56,15 @@
 </label>
 
 {#if showList}
-	{#await promise}
-		<p>Loading...</p>
-	{:then toDoLists}
-		<div style:max-width="20rem">
-			<ToDoList
-				{toDoLists}
-				bind:this={toDoListBox}
-				on:addtodo={handleAddToDoLists}
-				on:removetodo={handleRemoveToDoLists}
-				on:toggletodo={handleToggleToDoLists}
-			/>
-		</div>
-	{:catch error}
-		<p>{error.message || 'An error has occured.'}</p>
-	{/await}
-
-	<button
-		on:click={() => {
-			promise = LOAD_toDoLists();
-		}}
-	>
-		Refresh
-	</button>
+	<div style:max-width="20rem">
+		<ToDoList
+			{toDoLists}
+			bind:this={toDoListBox}
+			on:addtodo={handleAddToDoLists}
+			on:removetodo={handleRemoveToDoLists}
+			on:toggletodo={handleToggleToDoLists}
+		/>
+	</div>
 {/if}
 
 <style>
