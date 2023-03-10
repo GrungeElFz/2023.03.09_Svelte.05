@@ -45,14 +45,15 @@
 	}
 </script>
 
-
 <label>
 	<input type="checkbox" bind:checked={showList} />
 	Show/Hide Tasks
 </label>
 
 {#if showList}
-	{#await LOAD_toDoLists() then toDoLists }
+	{#await LOAD_toDoLists()}
+		<p>Loading...</p>
+	{:then toDoLists}
 		<div style:max-width="20rem">
 			<ToDoList
 				{toDoLists}
