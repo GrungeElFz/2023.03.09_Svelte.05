@@ -5,6 +5,7 @@
 	let showList = true;
 	let toDoListBox;
 	let toDoLists = null;
+	let promise = LOAD_toDoLists();
 
 	function LOAD_toDoLists() {
 		return fetch('https://jsonplaceholder.typicode.com/todos?_limit=10').then((response) => {
@@ -51,7 +52,7 @@
 </label>
 
 {#if showList}
-	{#await LOAD_toDoLists()}
+	{#await promise}
 		<p>Loading...</p>
 	{:then toDoLists}
 		<div style:max-width="20rem">
@@ -66,6 +67,14 @@
 	{:catch error}
 		<p>{error.message || 'An error has occured.'}</p>
 	{/await}
+
+	<button
+		on:click={() => {
+			promise = LOAD_toDoLists();
+		}}
+	>
+		Refresh
+	</button>
 {/if}
 
 <style>
