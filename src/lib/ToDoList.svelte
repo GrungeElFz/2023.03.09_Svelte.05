@@ -20,7 +20,7 @@
 
 	let prevToDoLists = toDoLists;
 	let inputText = '';
-	let listDiv, listDivScrollHeight, autoScroll;
+	let input, listDiv, listDivScrollHeight, autoScroll;
 
 	const dispatch = createEventDispatcher();
 
@@ -31,6 +31,10 @@
 
 	export function clearInput() {
 		inputText = '';
+	}
+
+	export function focusInput() {
+		input.focus();
 	}
 
 	function handleAddToDoLists() {
@@ -106,7 +110,12 @@
 	{/if}
 
 	<form class="toDoLists-form" on:submit|preventDefault={handleAddToDoLists}>
-		<input disabled={disableAdding || !toDoLists} bind:value={inputText} placeholder="New item" />
+		<input
+			disabled={disableAdding || !toDoLists}
+			bind:this={input}
+			bind:value={inputText}
+			placeholder="New item"
+		/>
 		<Button type="submit" disabled={!inputText || disableAdding || !toDoLists}>Add</Button>
 	</form>
 </div>

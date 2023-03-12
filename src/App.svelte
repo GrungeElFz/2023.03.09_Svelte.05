@@ -1,7 +1,7 @@
 <script>
 	import ToDoList from './lib/ToDoList.svelte';
 	import { v4 as uuid } from 'uuid';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 
 	let toDoListBox;
 	let showList = true;
@@ -53,6 +53,8 @@
 		});
 
 		isAdding = false;
+		await tick();
+		toDoListBox.focusInput();
 	}
 
 	function handleRemoveToDoLists(event) {
