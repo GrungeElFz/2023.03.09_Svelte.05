@@ -9,6 +9,7 @@
 	let toDoLists = null;
 	let error = null;
 	let isLoading = false;
+	let isAdding = false;
 
 	onMount(() => {
 		LOAD_toDoLists();
@@ -28,19 +29,30 @@
 		isLoading = false;
 	}
 
-	function handleAddToDoLists(event) {
+	async function handleAddToDoLists(event) {
 		event.preventDefault();
+		isAdding = true;
 
-		toDoLists = [
-			...toDoLists,
-			{
-				id: uuid(),
+		await fetch('https://jsonplaceholder.typicode.com/todos', {
+			method: 'POST',
+			body: JSON.stringify({
 				title: event.detail.title,
 				completed: false
+			}),
+			headers: {
+				'Content-type': 'application/json;charset=UTF-8'
 			}
-		];
+		}).then(async (response) => {
+			if (response.ok) {
+				const toDoList = await response.json();
+				toDoLists = [...toDoLists, { ...toDoList, id: uuid() }];
+				toDoListBox.clearInput();
+			} else {
+				alert('An error has occured.');
+			}
+		});
 
-		toDoListBox.clearInput();
+		isAdding = false;
 	}
 
 	function handleRemoveToDoLists(event) {
@@ -68,6 +80,7 @@
 			{toDoLists}
 			{error}
 			{isLoading}
+			disableAdding={isAdding}
 			bind:this={toDoListBox}
 			on:addtodo={handleAddToDoLists}
 			on:removetodo={handleRemoveToDoLists}

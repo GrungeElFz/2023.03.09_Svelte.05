@@ -16,6 +16,7 @@
 	export let toDoLists = null;
 	export let error = null;
 	export let isLoading = false;
+	export let disableAdding = false;
 
 	let prevToDoLists = toDoLists;
 	let inputText = '';
@@ -105,8 +106,8 @@
 	{/if}
 
 	<form class="toDoLists-form" on:submit|preventDefault={handleAddToDoLists}>
-		<input bind:value={inputText} placeholder="New item" />
-		<Button type="submit" disabled={!inputText}>Add</Button>
+		<input disabled={disableAdding || !toDoLists} bind:value={inputText} placeholder="New item" />
+		<Button type="submit" disabled={!inputText || disableAdding || !toDoLists}>Add</Button>
 	</form>
 </div>
 
