@@ -17,6 +17,7 @@
 	export let error = null;
 	export let isLoading = false;
 	export let disableAdding = false;
+	export let disabledItems = [];
 
 	let prevToDoLists = toDoLists;
 	let inputText = '';
@@ -83,6 +84,7 @@
 							<li class:completed>
 								<label>
 									<input
+										disabled={disabledItems.includes(id)}
 										on:input={(event) => {
 											event.currentTarget.checked = completed;
 											handleToggleToDoLists(id, !completed);
@@ -93,6 +95,7 @@
 									{title}
 								</label>
 								<button
+									disabled={disabledItems.includes(id)}
 									class="remove-todo-button"
 									aria-label="Remove toDoList: {title}"
 									on:click={() => handleRemoveToDoLists(id)}
@@ -167,6 +170,10 @@
 						position: absolute;
 						right: 0.3rem;
 						cursor: pointer;
+						&:disabled {
+							opacity: 0.5;
+							cursor: not-allowed;
+						}
 						:global(svg) {
 							fill: rgb(100, 100, 100);
 						}

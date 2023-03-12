@@ -10,6 +10,7 @@
 	let error = null;
 	let isLoading = false;
 	let isAdding = false;
+	let disabledItems = [];
 
 	onMount(() => {
 		LOAD_toDoLists();
@@ -57,10 +58,13 @@
 		toDoListBox.focusInput();
 	}
 
-	function handleRemoveToDoLists(event) {
+	async function handleRemoveToDoLists(event) {
 		const id = event.detail.id;
+		if (disabledItems.includes(id)) return;
 
-		fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+		disabledItems = [...disabledItems, id];
+
+		await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
 			method: 'DELETE'
 		}).then((response) => {
 			if (response.ok) {
@@ -69,14 +73,36 @@
 				alert('An error has occured.');
 			}
 		});
+
+		disabledItems = disabledItems.filter((itemID) => itemID !== id);
 	}
 
-	function handleToggleToDoLists(event) {
-		toDoLists = toDoLists.map((toDoItem) => {
-			if (toDoItem.id === event.detail.id) {
-				return { ...toDoItem, completed: event.detail.value };
+	async function handleToggleToDoLists(event) {
+		const id = event.detail.id;
+		const value = event.detail.value;
+		if (disabledItems.includes(id)) return;
+
+		await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+			method: 'PATCH',
+			body: JSON.stringify({
+				completed: value
+			}),
+			headers: {
+				'Content-type': 'application/json;charset=UTF-8'
 			}
-			return { ...toDoItem };
+		}).then(async (response) => {
+			if (response.ok) {
+				const updateToDoLists = await response.json();
+
+				toDoLists = toDoLists.map((toDoItem) => {
+					if (toDoItem.id === event.detail.id) {
+						return { ...toDoItem, completed: event.detail.value };
+					}
+					return { ...toDoItem };
+				});
+			}
+
+			disabledItems = disabledItems.filter((itemID) => itemID !== id);
 		});
 	}
 </script>
@@ -92,6 +118,7 @@
 			{toDoLists}
 			{error}
 			{isLoading}
+			{disabledItems}
 			disableAdding={isAdding}
 			bind:this={toDoListBox}
 			on:addtodo={handleAddToDoLists}
