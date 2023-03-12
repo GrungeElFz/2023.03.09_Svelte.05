@@ -96,7 +96,7 @@
 
 				toDoLists = toDoLists.map((toDoItem) => {
 					if (toDoItem.id === event.detail.id) {
-						return { ...toDoItem, completed: event.detail.value };
+						return updateToDoLists;
 					}
 					return { ...toDoItem };
 				});
