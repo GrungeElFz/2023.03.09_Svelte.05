@@ -58,7 +58,17 @@
 	}
 
 	function handleRemoveToDoLists(event) {
-		toDoLists = toDoLists.filter((toDoItem) => toDoItem.id !== event.detail.id);
+		const id = event.detail.id;
+
+		fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+			method: 'DELETE'
+		}).then((response) => {
+			if (response.ok) {
+				toDoLists = toDoLists.filter((toDoItem) => toDoItem.id !== event.detail.id);
+			} else {
+				alert('An error has occured.');
+			}
+		});
 	}
 
 	function handleToggleToDoLists(event) {
