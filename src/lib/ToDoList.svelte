@@ -80,30 +80,35 @@
 					<p class="no-item-text">Nothing to do 🤷‍♀️</p>
 				{:else}
 					<ul>
-						{#each toDoLists as { id, title, completed } (id)}
-							<li class:completed>
-								<label>
-									<input
-										disabled={disabledItems.includes(id)}
-										on:input={(event) => {
-											event.currentTarget.checked = completed;
-											handleToggleToDoLists(id, !completed);
-										}}
-										type="checkbox"
-										checked={completed}
-									/>
-									{title}
-								</label>
-								<button
-									disabled={disabledItems.includes(id)}
-									class="remove-todo-button"
-									aria-label="Remove toDoList: {title}"
-									on:click={() => handleRemoveToDoLists(id)}
-								>
-									<span style:width="0.5rem" style:display="inline-block">
-										<FaRegTrashAlt />
-									</span>
-								</button>
+						{#each toDoLists as toDoList, index (toDoList.id)}
+							{@const { id, completed, title } = toDoList}
+							<li>
+								<slot {toDoList} {index} {handleToggleToDoLists}>
+									<div class:completed>
+										<label>
+											<input
+												disabled={disabledItems.includes(id)}
+												on:input={(event) => {
+													event.currentTarget.checked = completed;
+													handleToggleToDoLists(id, !completed);
+												}}
+												type="checkbox"
+												checked={completed}
+											/>
+											<slot name="title">{title}</slot>
+										</label>
+										<button
+											disabled={disabledItems.includes(id)}
+											class="remove-todo-button"
+											aria-label="Remove toDoList: {title}"
+											on:click={() => handleRemoveToDoLists(id)}
+										>
+											<span style:width="0.5rem" style:display="inline-block">
+												<FaRegTrashAlt />
+											</span>
+										</button>
+									</div>
+								</slot>
 							</li>
 						{/each}
 					</ul>
@@ -140,7 +145,7 @@
 				margin: 0;
 				padding: 1rem;
 				list-style: none;
-				li {
+				li > div {
 					margin-bottom: 0.3rem;
 					display: flex;
 					align-items: center;

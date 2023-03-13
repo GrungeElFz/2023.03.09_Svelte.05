@@ -124,7 +124,11 @@
 			on:addtodo={handleAddToDoLists}
 			on:removetodo={handleRemoveToDoLists}
 			on:toggletodo={handleToggleToDoLists}
-		/>
+			let:toDoList
+			let:index
+		>
+			<span slot="title">{index + 1}. {toDoList.title}</span>
+		</ToDoList>
 	</div>
 {/if}
 
